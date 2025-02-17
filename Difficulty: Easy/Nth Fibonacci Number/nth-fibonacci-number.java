@@ -23,11 +23,28 @@ class GFG {
 // User function Template for Java
 
 class Solution {
+    
+    int process(int n,int[] arr){
+        if(n<=1){
+            return arr[n];
+        }
+        if(arr[n]!=-1){
+            return arr[n];
+        }
+        arr[n] = process(n-1,arr) + process(n-2,arr);
+        return arr[n];
+    }
+    
+    
     public int nthFibonacci(int n) {
         // code here
-        if(n<=1){
-            return n;
+        int[] arr = new int[n+1];
+        Arrays.fill(arr,-1);
+        arr[0]=0;
+        if(n>0){
+            arr[1]=1;
         }
-        return nthFibonacci(n-1)+nthFibonacci(n-2);
+        process(n,arr);
+        return arr[n];
     }
 }
