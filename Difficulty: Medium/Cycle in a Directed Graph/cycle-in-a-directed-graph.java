@@ -34,32 +34,35 @@ class DriverClass {
 
 class Solution {
     // Function to detect cycle in a directed graph.
-    
-    boolean isCyclic(int start,ArrayList<ArrayList<Integer>> adj,boolean[] vis,boolean[] path){
-        vis[start] = true;
-        path[start] = true;
-        for(int each : adj.get(start)){
-            if((!vis[each]) && isCyclic(each,adj,vis,path)){
-                return true;
-            }
-            if(path[each]){
-                return true;
-            }
-        }
-        path[start]=false;
-        return false;
-    }
-    
     public boolean isCyclic(ArrayList<ArrayList<Integer>> adj) {
         // code here
-        int size = adj.size();
-        boolean[] vis = new boolean[size];
-        boolean[] path = new boolean[size];
-        for(int i=0;i<size;i++){
-            if((!vis[i]) && isCyclic(i,adj,vis,path)){
-                return true;
+        int v = adj.size();
+        int[] inDegree = new int[v];
+        Deque<Integer> q = new ArrayDeque<>();
+        for(List<Integer> list : adj){
+            for(int each : list){
+                inDegree[each]++;
             }
         }
-        return false;
+        for(int i=0;i<v;i++){
+            if(inDegree[i]==0){
+                q.offer(i);
+            }
+        }
+        // System.out.println("arr is "+Arrays.toString(inDegree));
+        int counter=0;
+        while(!q.isEmpty()){
+            int node = q.poll();
+            counter++;
+            for(int each : adj.get(node)){
+                inDegree[each]--;
+                if(inDegree[each]==0){
+                    q.offer(each);
+                }
+            }
+        }
+        // System.out.println("The ans is "+counter);
+        return counter!=v;
+        
     }
 }
