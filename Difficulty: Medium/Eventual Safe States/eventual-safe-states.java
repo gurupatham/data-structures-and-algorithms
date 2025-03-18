@@ -44,46 +44,39 @@ System.out.println("~");
 // User function Template for Java
 
 class Solution {
-    
-    boolean isCycle(int vertex,List<List<Integer>> adj,boolean[] vis,boolean[] pathVis,boolean[] check){
-        vis[vertex] = true;
-        pathVis[vertex] = true;
-        
-        for(int each : adj.get(vertex)){
-            if((!vis[each]) && isCycle(each,adj,vis,pathVis,check)){
-                return true;
-            }
-            else if(pathVis[each]){
-                return true;
-            }
-        }
-        check[vertex] = true;
-        pathVis[vertex] = false;
-        return false;
-    }
-    
 
     List<Integer> eventualSafeNodes(int v, List<List<Integer>> adj) {
 
         // Your code here
-        boolean[] vis = new boolean[v];
-        boolean[] pathVis = new boolean[v];
-        boolean[] check = new boolean[v];
         List<Integer> ans = new ArrayList<>();
-        
+        List<List<Integer>> revAdj = new ArrayList<>();
+        Deque<Integer> q = new ArrayDeque<>();
         for(int i=0;i<v;i++){
-            if(!vis[i]){
-                isCycle(i,adj,vis,pathVis,check);
+            revAdj.add(new ArrayList<>());
+        }
+        int[] inDegree = new int[v];
+        for(int i=0;i<v;i++){
+            for(int each : adj.get(i)){
+                revAdj.get(each).add(i);
+                inDegree[i]++;
             }
         }
-        
         for(int i=0;i<v;i++){
-            if(check[i]){
-                ans.add(i);
+            if(inDegree[i]==0){
+                q.offer(i);
             }
         }
-        
+        while(!q.isEmpty()){
+            int vertex = q.poll();
+            ans.add(vertex);
+            for(int each : revAdj.get(vertex)){
+                inDegree[each]--;
+                if(inDegree[each]==0){
+                    q.offer(each);
+                }
+            }
+        }
+        Collections.sort(ans);
         return ans;
-        
     }
 }
