@@ -1,66 +1,69 @@
-//{ Driver Code Starts
-import java.io.*;
-import java.util.*;
+// User function Template for Java
 
-class GFG {
-    public static void main(String args[]) throws IOException {
-        BufferedReader read =
-            new BufferedReader(new InputStreamReader(System.in));
-        int t = Integer.parseInt(read.readLine());
-        while (t-- > 0) {
-            int V = Integer.parseInt(read.readLine());
-            
-            ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-            
-            for(int i=0; i<V; i++)
-            {
-                String S[] = read.readLine().split(" ");
-                ArrayList<Integer> temp = new ArrayList<>();
-                for(int j=0; j<V; j++)
-                    temp.add(Integer.parseInt(S[j]));
-                adj.add(temp);
-            }
 
-            Solution ob = new Solution();
-            System.out.println(ob.numProvinces(adj,V));
+class DisjointSet{
+    int[] size;
+    int[] parent;
+    
+    DisjointSet(int n){
+        size = new int[n];
+        parent = new int[n];
         
-System.out.println("~");
-}
-    }
-}
-// } Driver Code Ends
-
-
-//User function Template for Java
-
-class Solution {
-    
-    
-    static void bfs(int node,ArrayList<ArrayList<Integer>> adj,boolean[] vis,Deque<Integer> q){
-        vis[node]=true;
-        q.offer(node);
-        while(!q.isEmpty()){
-            Integer ele = q.poll();
-            for(int i=0;i<adj.size();i++){
-                if(adj.get(ele).get(i)==1 && vis[i]==false){
-                    q.offer(i);
-                    vis[i]=true;
-                }
-            }
+        Arrays.fill(size,1);
+        for(int i=0;i<n;i++){
+            parent[i]=i;
         }
     }
     
+    int getParent(int x){
+        if(parent[x]==x){
+            return x;
+        }
+        return parent[x]=getParent(parent[x]);
+    }
+    
+    void unionBySize(int u,int v){
+        int ulp_u = getParent(u);
+        int ulp_v = getParent(v);
+        
+        if(ulp_u==ulp_v){
+            return;
+        }
+        
+        if(size[ulp_u] < size[ulp_v]){
+            size[ulp_v]+=size[ulp_u];
+            parent[ulp_u]=ulp_v;
+        }
+        else{
+            size[ulp_u]+=size[ulp_v];
+            parent[ulp_v]=ulp_u;
+        }
+        
+    }
+    
+    
+}
+
+class Solution {
     static int numProvinces(ArrayList<ArrayList<Integer>> adj, int V) {
         // code here
         int ans=0;
-        boolean[] vis = new boolean[V];
-        Deque<Integer> q = new ArrayDeque<>();
+        DisjointSet d = new DisjointSet(V);
         for(int i=0;i<V;i++){
-            if(!vis[i]){
-                ans++;
-                bfs(i,adj,vis,q);
+            for(int j=0;j<V;j++){
+                if(adj.get(i).get(j) == 1){
+                    d.unionBySize(i,j);
+                }
             }
         }
+        
+        for(int i=0;i<V;i++){
+            if(d.parent[i]==i){
+                ans++;
+            }
+        }
+        
+        
         return ans;
     }
 };
