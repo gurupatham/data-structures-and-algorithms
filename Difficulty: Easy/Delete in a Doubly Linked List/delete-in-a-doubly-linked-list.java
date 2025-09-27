@@ -1,6 +1,5 @@
 /*
-
-Definition for doubly Link List Node
+Structure of a Doubly LinkList
 class Node {
     int data;
     Node next;
@@ -14,34 +13,27 @@ class Node {
 }
 */
 class Solution {
-    public Node deleteNode(Node head, int x) {
+    public Node delPos(Node head, int x) {
         // code here
-        if(Objects.isNull(head)){
-            return head;
-        }
         if(x==1){
-            Node temp = head.next;
-            if(Objects.nonNull(temp)){
+            if(Objects.nonNull(head.next)){
                 head.next.prev=null;
-                // head.next=null;
             }
-            return temp;
+            return head.next;
         }
-        int c=1;
-        Node curr=head,prev=null;
-        while(Objects.nonNull(curr) && c<x){
-            prev = curr;
+        Node curr = head;
+        int pos=1;
+        while(Objects.nonNull(curr)){
+            if(pos==x){
+                curr.prev.next=curr.next;
+                if(Objects.nonNull(curr.next)){
+                    curr.next.prev=curr.prev;
+                }
+                break;
+            }
+            pos++;
             curr = curr.next;
-            c++;
         }
-        if(Objects.isNull(curr)){
-            return head;
-        }
-        prev.next = curr.next;
-        if(Objects.nonNull(curr.next)){
-            curr.next.prev=prev;
-        }
-        
         return head;
     }
 }
